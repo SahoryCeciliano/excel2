@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar Excel Automáticamente</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h1>Datos del Excel Cargado Automáticamente</h1>
+    <table id="excelData"></table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Reemplaza 'archivo.xlsx' con la ruta a tu archivo Excel
+            fetch('Matriz de Prematricual.xlsx')
+                .then(response => response.arrayBuffer())
+                .then(data => {
+                    const workbook = XLSX.read(data, { type: 'array' });
+
+                    // Suponiendo que quieres leer la primera hoja
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+                    // Mostrar datos en una tabla
+                    const table = document.getElementById('excelData');
+                    table.innerHTML = ""; // Limpiar tabla anterior
+
+                    jsonData.forEach(row => {
+                        const tr = document.createElement('tr');
+                        row.forEach(cell => {
+                            const td = document.createElement('td');
+                            td.textContent = cell;
+                            tr.appendChild(td);
+                        });
+                        table.appendChild(tr);
+                    });
+                })
+                .catch(error => console.error('Error al cargar el archivo Excel:', error));
+        });
+    </script>
+</body>
+</html>
